@@ -1,22 +1,13 @@
 #![feature(async_closure, proc_macro_hygiene, decl_macro)]
 #![deny(intra_doc_link_resolution_failure)]
 
-mod api;
-mod kubernetes;
-mod manager;
-mod metrics;
-
-use crate::manager::Manager;
+use playground::{api, manager::Manager, Context};
 use rocket::{config::Environment, http::Method, routes};
 use rocket_contrib::serve::StaticFiles;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_prometheus::PrometheusMetrics;
 use std::{env, error::Error};
 use tokio;
-
-pub struct Context {
-    manager: Manager,
-}
 
 /// manager -> kubernetes, metrics
 /// manager is injected into api

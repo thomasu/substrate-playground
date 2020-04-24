@@ -42,7 +42,7 @@ impl Manager {
                 if let Ok(details) = self.clone().get(&user_uuid, &instance_uuid) {
                     let phase = details.phase;
                     if phase != "Pending" && phase != "Unknown" {
-                        let res = instances2.remove(&user_uuid);
+                        instances2.remove(&user_uuid);
                         self.clone().metrics.observe_deploy_duration(&instance_uuid, details.started_at.elapsed().unwrap().as_secs_f64());
                     }
                 }

@@ -60,6 +60,7 @@ fn create_pod(user_uuid: &str, instance_uuid: &str, image: &str) -> Pod {
             containers: vec![Container {
                 name: format!("{}-container", COMPONENT_VALUE).to_string(),
                 image: Some(image.to_string()),
+                image_pull_policy: Some("Never".to_string()),
                 ..Default::default()
             }],
             ..Default::default()
@@ -298,6 +299,12 @@ impl Engine {
             .collect();
 
         Ok(names)
+    }
+
+    pub async fn get_images(self)-> Result<BTreeMap<String, String>, String> {
+        let config = config().await?;
+        let client = APIClient::new(config);
+        Ok(get_config_map(client.clone(), &self.namespace, "theia-images").await?)
     }
 
     pub async fn deploy(self, user_uuid: &str, template: &str) -> Result<String, String> {

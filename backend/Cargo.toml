@@ -1,6 +1,9 @@
 [[bin]]
 name = "playground"
 
+[[bin]]
+name = "image-puller"
+
 [package]
 name = "playground"
 version = "0.1.0"
