@@ -11,6 +11,7 @@ spec:
   containers:
   - name: backend-api
     image: gcr.io/substrateplayground-252112/jeluard/substrate-playground-backend-api
+    args: ["controller"]
     ports:
     - containerPort: 80
     env:

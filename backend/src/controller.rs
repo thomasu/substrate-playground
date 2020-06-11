@@ -1,3 +1,12 @@
+#![feature(async_closure, proc_macro_hygiene, decl_macro)]
+#![deny(intra_doc_link_resolution_failure)]
+
+mod api;
+mod kubernetes;
+mod manager;
+mod metrics;
+mod template;
+
 use crate::manager::Manager;
 use rocket::{config::Environment, http::Method, routes};
 use rocket_cors::{AllowedOrigins, CorsOptions};
@@ -8,37 +17,10 @@ pub struct Context {
     manager: Manager,
 }
 
+/// manager -> kubernetes, metrics
+/// manager is injected into api
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize log configuration. Reads `RUST_LOG` if any, otherwise fallsback to `default`
-    if env::var("RUST_LOG").is_err() {
-        env::set_var("RUST_LOG", "warn");
-    }
-    env_logger::init();
-
-    let system_id = env::args().next().ok_or("missing required component argument".to_string())?;
-    let system = match system_id {
-        "controller" => "",
-    }
-
-    log::info!("Running in {:?} mode", Environment::active()?);
-    let key = "GITHUB_SHA";
-    match env::var(key) {
-        Ok(val) => println!("Version {:?}", val),
-        Err(e) => println!("Can't access {}: {}", key, e),
-    }
-
-    // Configure CORS
-    let allowed_origins = AllowedOrigins::All;
-    let cors = CorsOptions {
-        allowed_origins,
-        allowed_methods: vec![Method::Get].into_iter().map(From::from).collect(),
-        //TODO only from host
-        //allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
-        allow_credentials: true,
-        ..Default::default()
-    }
-    .to_cors()?;
 
     let manager = Manager::new().await?;
     manager.clone().spawn_background_thread();

@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: backend-puller-daemon
+spec:
+  selector:
+    matchLabels:
+      name: backend-puller 
+  template:
+    metadata:
+      labels:
+        name: backend-puller 
+    spec:
+      initContainers:
+      - name: backend-puller 
+        image: gcr.io/substrateplayground-252112/jeluard/substrate-playground-backend-api
+        args: ["puller"]
+      containers:
+      - name: pause
+        image: gcr.io/google_containers/pause
