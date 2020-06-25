@@ -7,12 +7,19 @@
         
         <meta name="robots" content="noindex" />
         
+        
+
+
+        <!-- Custom HTML head -->
+        
+
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
@@ -21,8 +28,9 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        
+        <link rel="stylesheet" href="fonts/fonts.css">
+        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -38,7 +46,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -83,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -251,6 +259,51 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
 <li>https://blog.octo.com/liveness-et-readiness-probes-mettez-de-lintelligence-dans-vos-clusters/</li>
 <li>https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#examples</li>
 </ul>
+<h1><a class="header" href="#deployment" id="deployment">Deployment</a></h1>
+<p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
+It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
+<pre><code class="language-shell"># Use the local kubernetes cluster
+kubectl config use-context docker-for-desktop
+kubectl config set-context --current --namespace=default
+</code></pre>
+<p>Then in a first shell, start:</p>
+<pre><code>make dev-backend
+</code></pre>
+<p>And in a second terminal:</p>
+<pre><code>make dev-frontend
+</code></pre>
+<p>You can now browse <code>http://localhost:8000</code>.</p>
+<h1><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h1>
+<p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
+<pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+</code></pre>
+<p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
+<pre><code># Add a dummy user access
+# Warning: user is granted all access
+kubectl apply -f conf/k8s/dashboard-user.yaml
+# Get access to the token
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+</code></pre>
+<p>Let the dashboard be accessible:</p>
+<pre><code class="language-shell">kubectl proxy
+</code></pre>
+<p>Then navigate the <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">browser</a> and supply the relevant token.</p>
+<p>External users can provide and maintain templates used by the playground.</p>
+<p>To create a template the following steps are mandatory:</p>
+<ul>
+<li>create a basic Dockerfile (in <code>.devcontainer/Dockerfile</code>) extending <code>paritytech/substrate-playground-template-base</code></li>
+<li>create <code>.devcontainer/devcontainer.json</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.devcontainer/devcontainer.json">here</a>)</li>
+<li>create a Github worflow that build this image then dispatches an event to <code>substrate-playground</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.github/workflows/build-push-template.yml">here</a>)</li>
+</ul>
+<p>Additionally there are a number of standard VSCode configuration files that will be leveraged by the playground:</p>
+<ul>
+<li>.vscode/settings.json (see https://code.visualstudio.com/docs/getstarted/settings)</li>
+<li>.vscode/launch.json</li>
+<li>.vscode/tasks.json</li>
+<li>.vscode/snippets.code-snippets</li>
+</ul>
+<p>An example of adding support to an external repository can be found <a href="https://github.com/substrate-developer-hub/substrate-node-template/">here</a>.</p>
+<p>After the associated Github workflow in <code>substrate-playground</code> is triggered, playground will use the newly built image. </p>
 
                     </main>
 
@@ -278,10 +331,10 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
         
 
         
-        
+
         
         <script type="text/javascript">
-            window.playpen_copyable = true;
+            window.playground_copyable = true;
         </script>
         
 

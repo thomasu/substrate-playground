@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>MONITORING - Playground</title>
+        <title>DEVELOPMENT - Playground</title>
         
         
 
@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html" class="active">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html" class="active">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -155,45 +155,48 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>{{# DEPLOYMENT}}</p>
-<h1><a class="header" href="#infrastructure" id="infrastructure">Infrastructure</a></h1>
-<p>kube, docker, backend server
-https://docs.docker.com/config/thirdparty/prometheus/</p>
-<h1><a class="header" href="#theia-and-users" id="theia-and-users">Theia and users</a></h1>
-<h1><a class="header" href="#deployed-nodes" id="deployed-nodes">Deployed nodes</a></h1>
-<p>Substrate exposes prometeus endpoints
-https://github.com/paritytech/substrate/pull/4511
-https://forum.parity.io/t/metrics-for-reliability-and-performance-monitoring/356</p>
-<h1><a class="header" href="#resources" id="resources">Resources</a></h1>
-<p>https://mxinden.github.io/static/self-service-monitoring.pdf (https://github.com/mxinden/self-service-monitoring-workshop)
-https://mxinden.github.io/static/metric-driven-performance-optimization/slides.pdf</p>
-<h1><a class="header" href="#stackdriver" id="stackdriver">Stackdriver</a></h1>
-<p>https://cloud.google.com/stackdriver/pricing</p>
-<h2><a class="header" href="#monitoring--probes" id="monitoring--probes">Monitoring / Probes</a></h2>
-<ul>
-<li>https://console.cloud.google.com/marketplace/details/google/prometheus</li>
-<li>https://prometheus.io/docs/visualization/grafana/</li>
-<li>https://grafana.com/docs/grafana/latest/features/datasources/prometheus/</li>
-<li>https://itnext.io/kubernetes-monitoring-with-prometheus-in-15-minutes-8e54d1de2e13</li>
-<li>https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</li>
-<li>https://medium.com/@AADota/kubernetes-liveness-and-readiness-probes-difference-1b659c369e17</li>
-<li>https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-setting-up-health-checks-with-readiness-and-liveness-probes</li>
-<li>https://blog.octo.com/liveness-et-readiness-probes-mettez-de-lintelligence-dans-vos-clusters/</li>
-<li>https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#examples</li>
-</ul>
+                        <h1><a class="header" href="#deployment" id="deployment">Deployment</a></h1>
+<p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
+It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
+<pre><code class="language-shell"># Use the local kubernetes cluster
+kubectl config use-context docker-for-desktop
+kubectl config set-context --current --namespace=default
+</code></pre>
+<p>Then in a first shell, start:</p>
+<pre><code>make dev-backend
+</code></pre>
+<p>And in a second terminal:</p>
+<pre><code>make dev-frontend
+</code></pre>
+<p>You can now browse <code>http://localhost:8000</code>.</p>
+<h1><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h1>
+<p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
+<pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+</code></pre>
+<p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
+<pre><code># Add a dummy user access
+# Warning: user is granted all access
+kubectl apply -f conf/k8s/dashboard-user.yaml
+# Get access to the token
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+</code></pre>
+<p>Let the dashboard be accessible:</p>
+<pre><code class="language-shell">kubectl proxy
+</code></pre>
+<p>Then navigate the <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">browser</a> and supply the relevant token.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="DEPLOYMENT.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="MONITORING.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="DEVELOPMENT.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="CUSTOM_TEMPLATE.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -205,13 +208,13 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="DEPLOYMENT.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="MONITORING.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="DEVELOPMENT.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="CUSTOM_TEMPLATE.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

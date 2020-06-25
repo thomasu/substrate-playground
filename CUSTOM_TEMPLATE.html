@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>MONITORING - Playground</title>
+        <title>CUSTOM TEMPLATE - Playground</title>
         
         
 
@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html" class="active">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html" class="active">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -155,47 +155,33 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>{{# DEPLOYMENT}}</p>
-<h1><a class="header" href="#infrastructure" id="infrastructure">Infrastructure</a></h1>
-<p>kube, docker, backend server
-https://docs.docker.com/config/thirdparty/prometheus/</p>
-<h1><a class="header" href="#theia-and-users" id="theia-and-users">Theia and users</a></h1>
-<h1><a class="header" href="#deployed-nodes" id="deployed-nodes">Deployed nodes</a></h1>
-<p>Substrate exposes prometeus endpoints
-https://github.com/paritytech/substrate/pull/4511
-https://forum.parity.io/t/metrics-for-reliability-and-performance-monitoring/356</p>
-<h1><a class="header" href="#resources" id="resources">Resources</a></h1>
-<p>https://mxinden.github.io/static/self-service-monitoring.pdf (https://github.com/mxinden/self-service-monitoring-workshop)
-https://mxinden.github.io/static/metric-driven-performance-optimization/slides.pdf</p>
-<h1><a class="header" href="#stackdriver" id="stackdriver">Stackdriver</a></h1>
-<p>https://cloud.google.com/stackdriver/pricing</p>
-<h2><a class="header" href="#monitoring--probes" id="monitoring--probes">Monitoring / Probes</a></h2>
+                        <p>External users can provide and maintain templates used by the playground.</p>
+<p>To create a template the following steps are mandatory:</p>
 <ul>
-<li>https://console.cloud.google.com/marketplace/details/google/prometheus</li>
-<li>https://prometheus.io/docs/visualization/grafana/</li>
-<li>https://grafana.com/docs/grafana/latest/features/datasources/prometheus/</li>
-<li>https://itnext.io/kubernetes-monitoring-with-prometheus-in-15-minutes-8e54d1de2e13</li>
-<li>https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</li>
-<li>https://medium.com/@AADota/kubernetes-liveness-and-readiness-probes-difference-1b659c369e17</li>
-<li>https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-setting-up-health-checks-with-readiness-and-liveness-probes</li>
-<li>https://blog.octo.com/liveness-et-readiness-probes-mettez-de-lintelligence-dans-vos-clusters/</li>
-<li>https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#examples</li>
+<li>create a basic Dockerfile (in <code>.devcontainer/Dockerfile</code>) extending <code>paritytech/substrate-playground-template-base</code></li>
+<li>create <code>.devcontainer/devcontainer.json</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.devcontainer/devcontainer.json">here</a>)</li>
+<li>create a Github worflow that build this image then dispatches an event to <code>substrate-playground</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.github/workflows/build-push-template.yml">here</a>)</li>
 </ul>
+<p>Additionally there are a number of standard VSCode configuration files that will be leveraged by the playground:</p>
+<ul>
+<li>.vscode/settings.json (see https://code.visualstudio.com/docs/getstarted/settings)</li>
+<li>.vscode/launch.json</li>
+<li>.vscode/tasks.json</li>
+<li>.vscode/snippets.code-snippets</li>
+</ul>
+<p>An example of adding support to an external repository can be found <a href="https://github.com/substrate-developer-hub/substrate-node-template/">here</a>.</p>
+<p>After the associated Github workflow in <code>substrate-playground</code> is triggered, playground will use the newly built image. </p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="DEPLOYMENT.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="DEVELOPMENT.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
-                        
-                            <a rel="next" href="DEVELOPMENT.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -205,15 +191,11 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="DEPLOYMENT.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="DEVELOPMENT.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
-                
-                    <a rel="next" href="DEVELOPMENT.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 
