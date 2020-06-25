@@ -155,26 +155,54 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#deployment" id="deployment">Deployment</a></h1>
-<p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
+                        <p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
 It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
 <pre><code class="language-shell"># Use the local kubernetes cluster
 kubectl config use-context docker-for-desktop
 kubectl config set-context --current --namespace=default
+
+# or
+
+make k8s-setup-development
 </code></pre>
-<p>Then in a first shell, start:</p>
-<pre><code>make dev-backend
+<p>A DNS resolving <code>playground-dev.substrate.test</code> to localhost must also be configured.</p>
+<p>On OSX, it can be achieved the following way:</p>
+<pre><code class="language-shell">brew install dnsmasq
+
+cp /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.orig
+echo &quot;conf-dir=/usr/local/etc/dnsmasq.d/,*.conf&quot; | tee /usr/local/etc/dnsmasq.conf
+
+cat &gt; /usr/local/etc/dnsmasq.d/playground.conf
+# then enter: address=/playground-dev.substrate.test/127.0.0.1
+
+sudo mkdir -p /etc/resolver 
+
+cat &gt; /etc/resolver/substrate.test
+# then enter: nameserver 127.0.0.1
+
+sudo brew services restart dnsmasq
+
+# Verify it works as expected
+
+dig playground-dev.substrate.test @localhost +short
+ping playground-dev.substrate.test
 </code></pre>
-<p>And in a second terminal:</p>
-<pre><code>make dev-frontend
+<p>Then deploy the cluster:</p>
+<pre><code class="language-shell">make k8s-deploy-playground
 </code></pre>
-<p>You can now browse <code>http://localhost:8000</code>.</p>
-<h1><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h1>
+<p>And initialize relevant ConfigMaps:</p>
+<pre><code class="language-shell"></code></pre>
+<p>You can now browse <code>http://playground-dev.substrate.test</code>.</p>
+<h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
+<p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
+<h3><a class="header" href="#cli" id="cli">CLI</a></h3>
+<p>Install <a href="https://github.com/derailed/k9s">k9s</a></p>
+<h3><a class="header" href="#web" id="web">Web</a></h3>
 <p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
 <pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
 </code></pre>
 <p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
-<pre><code># Add a dummy user access
+<pre><code class="language-shell"># Add a dummy user access
 # Warning: user is granted all access
 kubectl apply -f conf/k8s/dashboard-user.yaml
 # Get access to the token
@@ -183,7 +211,7 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 <p>Let the dashboard be accessible:</p>
 <pre><code class="language-shell">kubectl proxy
 </code></pre>
-<p>Then navigate the <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">browser</a> and supply the relevant token.</p>
+<p>Then navigate to this <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">link</a> and supply the relevant token.</p>
 
                     </main>
 
