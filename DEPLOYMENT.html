@@ -164,14 +164,18 @@
 </ul>
 <h1><a class="header" href="#kubernetes" id="kubernetes">Kubernetes</a></h1>
 <p>Kubernetes is used as a deployment platform for the playground. It can be deployed on GCE or locally via minikube.</p>
+<h2><a class="header" href="#setup" id="setup">Setup</a></h2>
+<p>For OSX</p>
+<pre><code>brew cask install google-cloud-sdk
+gcloud init
+gcloud container clusters get-credentials  susbtrate-playground-staging --zone us-central1-a
+ENVIRONMENT=staging make k8s-setup-gke
+</code></pre>
 <p>Deploy on GKE:</p>
 <pre><code>kubectl config use-context gke_substrateplayground-252112_us-central1-a_substrate-playground
 kubectl config set-context --current --namespace=playground-staging
 PLAYGROUND_DOCKER_IMAGE_VERSION=&quot;gcr.io/substrateplayground-252112/jeluard/substrate-playground@_VERSION_&quot; make k8s-deploy-playground
 </code></pre>
-<h2><a class="header" href="#gke" id="gke">GKE</a></h2>
-<p>Create a cluster
-Use the right context</p>
 <h3><a class="header" href="#clusters" id="clusters">Clusters</a></h3>
 <p>When switching / recreating clusters it might be necessary to refresh credentials:</p>
 <pre><code>gcloud container clusters get-credentials  susbtrate-playground-staging --zone us-central1-a
