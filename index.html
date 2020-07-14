@@ -158,12 +158,12 @@
                         <h1><a class="header" href="#update-playground-image" id="update-playground-image">Update playground image</a></h1>
 <ul>
 <li>build and push new image (<code>make push-playground-docker-image</code>)</li>
-<li></li>
 <li>select right context (<code>ENVIRONMENT=staging make k8s-setup-gke</code>)</li>
 <li>deploy on GKE (<code>ENVIRONMENT=staging make k8s-deploy-playground</code>)</li>
 </ul>
 <h1><a class="header" href="#kubernetes" id="kubernetes">Kubernetes</a></h1>
-<p>Kubernetes is used as a deployment platform for the playground. It can be deployed on GCE or locally via minikube.</p>
+<p>Kubernetes is used as a deployment platform for the playground. It can be deployed on GCE or locally via minikube.
+(Make sure that k8s 1.14 is used)</p>
 <h2><a class="header" href="#setup" id="setup">Setup</a></h2>
 <p>For OSX</p>
 <pre><code>brew cask install google-cloud-sdk
@@ -176,7 +176,7 @@ ENVIRONMENT=staging make k8s-setup-gke
 kubectl config set-context --current --namespace=playground-staging
 PLAYGROUND_DOCKER_IMAGE_VERSION=&quot;gcr.io/substrateplayground-252112/jeluard/substrate-playground@_VERSION_&quot; make k8s-deploy-playground
 </code></pre>
-<h3><a class="header" href="#clusters" id="clusters">Clusters</a></h3>
+<h2><a class="header" href="#clusters" id="clusters">Clusters</a></h2>
 <p>When switching / recreating clusters it might be necessary to refresh credentials:</p>
 <pre><code>gcloud container clusters get-credentials  susbtrate-playground-staging --zone us-central1-a
 </code></pre>
@@ -199,12 +199,12 @@ gcloud container clusters get-credentials substrate-playground --zone us-central
 <pre><code>kubectl get services playground-http
 </code></pre>
 <p>Ensure that <code>playground-http</code> is correctly deployed by browsing its <a href="https://console.cloud.google.com/kubernetes/service/us-central1-a/substrate-playground/default/playground-http?project=substrateplayground-252112&amp;organizationId=939403632241&amp;tab=events&amp;duration=PT1H&amp;pod_summary_list_tablesize=20&amp;playground-http_events_tablesize=50">events</a></p>
-<h3><a class="header" href="#tls-certificate" id="tls-certificate">TLS certificate</a></h3>
+<h2><a class="header" href="#tls-certificate" id="tls-certificate">TLS certificate</a></h2>
 <p>To get a wildcard certificate from let's encrypt (this applies to staging, replace <code>playground-staging</code> with <code>playground</code> for production env):</p>
 <p>https://certbot.eff.org/docs/using.html#manual</p>
-<p>First make sure that certbot is instalkled: <code>brew install certbot</code></p>
+<p>First make sure that certbot is installed: <code>brew install certbot</code></p>
 <p>Then request new challenges. Two DNS entries will have to be updated.</p>
-<p>For staging:</p>
+<h3><a class="header" href="#staging" id="staging">Staging</a></h3>
 <pre><code>sudo certbot certonly --manual --preferred-challenges dns --server https://acme-v02.api.letsencrypt.org/directory --manual-public-ip-logging-ok --agree-tos -m admin@parity.io -d *.playground-staging.substrate.dev -d playground-staging.substrate.dev
 
 # Make sure to check it's been propagated 
@@ -214,7 +214,17 @@ dig -t txt +short _acme-challenge.playground-staging.substrate.dev
 <pre><code>sudo kubectl create secret tls playground-tls --save-config --key /etc/letsencrypt/live/playground-staging.substrate.dev/privkey.pem --cert /etc/letsencrypt/live/playground-staging.substrate.dev/cert.pem  --namespace=playground-staging --dry-run -o yaml | sudo kubectl apply -f -
 </code></pre>
 <p>The new secret will be auomatically picked up.</p>
-<h3><a class="header" href="#update-fixed-ip" id="update-fixed-ip">Update fixed IP</a></h3>
+<h3><a class="header" href="#production" id="production">Production</a></h3>
+<pre><code>sudo certbot certonly --manual --preferred-challenges dns --server https://acme-v02.api.letsencrypt.org/directory --manual-public-ip-logging-ok --agree-tos -m admin@parity.io -d *.playground.substrate.dev -d playground.substrate.dev
+
+# Make sure to check it's been propagated 
+dig -t txt +short _acme-challenge.playground.substrate.dev
+</code></pre>
+<p>Then update the tls secret:</p>
+<pre><code>sudo kubectl create secret tls playground-tls --save-config --key /etc/letsencrypt/live/playground.substrate.dev/privkey.pem --cert /etc/letsencrypt/live/playground.substrate.dev/cert.pem  --namespace=playground --dry-run -o yaml | sudo kubectl apply -f -
+</code></pre>
+<p>The new secret will be auomatically picked up.</p>
+<h2><a class="header" href="#update-fixed-ip" id="update-fixed-ip">Update fixed IP</a></h2>
 <p>Make sure to use regional addresses, matching your cluster region. Global addresses won't work.</p>
 <pre><code>gcloud compute addresses create playground --global
 gcloud compute addresses describe playground --global
@@ -229,12 +239,6 @@ gcloud compute addresses describe playground --region=us-central1 --format=&quot
 <p>playground-staging        34.69.4.59      EXTERNAL                    us-central1          RESERVED</p>
 <pre><code>gcloud compute addresses delete playground --global
 </code></pre>
-<h1><a class="header" href="#make-sure-k8s-114-is-used" id="make-sure-k8s-114-is-used">Make sure k8s 1,14 is used</a></h1>
-<p>kubectl get ing ingress --namespace=playground-staging</p>
-<p>Should have an address</p>
-<p>kubectl port-forward playground-8586574b76-j7qbx 8080:80
-kubectl config set-context --current --namespace=playground-staging
-kubectl get pods</p>
 
                     </main>
 
