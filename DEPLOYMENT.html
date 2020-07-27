@@ -171,7 +171,8 @@ gcloud init
 gcloud container clusters get-credentials  susbtrate-playground-staging --zone us-central1-a
 ENVIRONMENT=staging make k8s-setup-gke
 </code></pre>
-<p>Set required ConfigMap and Secret:</p>
+<p>Make sure a Github OAuth App is <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app">created</a>. The Authorization callback URL should be <code>BASE/api/auth/github</code>.</p>
+<p>Set required ConfigMap and Secret as defined in the newly created OAuth app:</p>
 <pre><code class="language-shell">kubectl create configmap config --namespace=playground-staging --from-literal=github.clientId=''
 kubectl create secret generic secrets --namespace=playground-staging --from-literal=github.clientSecret=''
 </code></pre>
