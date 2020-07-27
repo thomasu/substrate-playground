@@ -171,10 +171,14 @@ gcloud init
 gcloud container clusters get-credentials  susbtrate-playground-staging --zone us-central1-a
 ENVIRONMENT=staging make k8s-setup-gke
 </code></pre>
+<p>Set required ConfigMap and Secret:</p>
+<pre><code class="language-shell">kubectl create configmap config --namespace=playground-staging --from-literal=github.clientId=''
+kubectl create secret generic secrets --namespace=playground-staging --from-literal=github.clientSecret=''
+</code></pre>
 <p>Deploy on GKE:</p>
 <pre><code>kubectl config use-context gke_substrateplayground-252112_us-central1-a_substrate-playground
 kubectl config set-context --current --namespace=playground-staging
-PLAYGROUND_DOCKER_IMAGE_VERSION=&quot;gcr.io/substrateplayground-252112/jeluard/substrate-playground@_VERSION_&quot; make k8s-deploy-playground
+PLAYGROUND_DOCKER_IMAGE_VERSION=&quot;paritytech/substrate-playground@_VERSION_&quot; make k8s-deploy-playground
 </code></pre>
 <h2><a class="header" href="#clusters" id="clusters">Clusters</a></h2>
 <p>When switching / recreating clusters it might be necessary to refresh credentials:</p>
@@ -228,6 +232,11 @@ ENVIRONMENT=production make k8s-setup-gke
 sudo kubectl create secret tls playground-tls --save-config --key /etc/letsencrypt/live/playground.substrate.dev/privkey.pem --cert /etc/letsencrypt/live/playground.substrate.dev/cert.pem  --namespace=playground --dry-run -o yaml | sudo kubectl apply -f -
 </code></pre>
 <p>The new secret will be auomatically picked up.</p>
+<p>Certificates can be checked using openssl:</p>
+<pre><code class="language-shell">openssl s_client -connect  playground.substrate.dev:443 -servername playground.substrate.dev -showcerts
+# Or for client with no SNI support
+openssl s_client -connect  playground.substrate.dev:443 -showcerts
+</code></pre>
 <h2><a class="header" href="#update-fixed-ip" id="update-fixed-ip">Update fixed IP</a></h2>
 <p>Make sure to use regional addresses, matching your cluster region. Global addresses won't work.</p>
 <pre><code>gcloud compute addresses create playground --global

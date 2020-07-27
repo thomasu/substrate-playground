@@ -191,8 +191,14 @@ ping playground-dev.substrate.test
 <pre><code class="language-shell">make k8s-deploy-playground
 </code></pre>
 <p>And initialize relevant ConfigMaps:</p>
-<pre><code class="language-shell"></code></pre>
+<pre><code class="language-shell">make k8s-update-templates-config
+</code></pre>
 <p>You can now browse <code>http://playground-dev.substrate.test</code>.</p>
+<p>Note that with this setup docker images must be re-compiled and <code>kustomization.yaml</code> before each new re-deploy to reflect code changes.</p>
+<p>An alternative is to use <a href="https://skaffold.dev/">skaffold</a>. This tool will re-compile Docker images and re-deploy the whole cluster after each code change.</p>
+<pre><code class="language-shell"># Instead of `make k8s-deploy-playground`
+make k8s-dev
+</code></pre>
 <h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
 <p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
 <h3><a class="header" href="#cli" id="cli">CLI</a></h3>
