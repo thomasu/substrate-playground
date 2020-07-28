@@ -170,7 +170,13 @@
 <li>.vscode/snippets.code-snippets</li>
 </ul>
 <p>An example of adding support to an external repository can be found <a href="https://github.com/substrate-developer-hub/substrate-node-template/">here</a>.</p>
-<p>After the associated Github workflow in <code>substrate-playground</code> is triggered, playground will use the newly built image. </p>
+<p>After the associated Github workflow in <a href="https://github.com/paritytech/substrate-playground">substrate-playground</a> is triggered, playground will use the newly built image. </p>
+<h1><a class="header" href="#github-workflow" id="github-workflow">Github workflow</a></h1>
+<p>See a working example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.github/workflows/build-push-template.yml">here</a>.</p>
+<h2><a class="header" href="#github-secrets" id="github-secrets">Github secrets</a></h2>
+<p>The following secrets must be defined:</p>
+<p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> to push the image to dockerhub (values will depend on the chosen docker image org)
+<code>REPO_ACCESS_TOKEN</code> a token with <code>public_repo</code> or repo scope</p>
 
                     </main>
 
