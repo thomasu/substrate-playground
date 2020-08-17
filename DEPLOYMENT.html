@@ -17,8 +17,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        
         <link rel="icon" href="favicon.svg">
+        
+        
         <link rel="shortcut icon" href="favicon.png">
+        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
@@ -36,6 +40,8 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="mermaid.css">
         
 
         
@@ -89,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html" class="active">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ARCHITECTURE.html">ARCHITECTURE</a></li><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html" class="active">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -259,6 +265,10 @@ gcloud compute addresses describe playground --region=us-central1 --format=&quot
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="ARCHITECTURE.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
                         
                             <a rel="next" href="MONITORING.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
@@ -272,6 +282,10 @@ gcloud compute addresses describe playground --region=us-central1 --format=&quot
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="ARCHITECTURE.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
                 
 
                 
@@ -308,6 +322,10 @@ gcloud compute addresses describe playground --region=us-central1 --format=&quot
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        
+        <script type="text/javascript" src="mermaid-init.js"></script>
         
 
         

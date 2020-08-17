@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>DEVELOPMENT - Playground</title>
+        <title>ARCHITECTURE - Playground</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ARCHITECTURE.html">ARCHITECTURE</a></li><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html" class="active">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ARCHITECTURE.html" class="active">ARCHITECTURE</a></li><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -161,82 +161,16 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
-It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
-<pre><code class="language-shell"># Use the local kubernetes cluster
-kubectl config use-context docker-for-desktop
-kubectl config set-context --current --namespace=default
-
-# or
-
-make k8s-setup-development
-</code></pre>
-<p>A DNS resolving <code>playground-dev.substrate.test</code> to localhost must also be configured.</p>
-<p>On OSX, it can be achieved the following way:</p>
-<pre><code class="language-shell">brew install dnsmasq
-
-cp /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.orig
-echo &quot;conf-dir=/usr/local/etc/dnsmasq.d/,*.conf&quot; | tee /usr/local/etc/dnsmasq.conf
-
-cat &gt; /usr/local/etc/dnsmasq.d/playground.conf
-# then enter: address=/playground-dev.substrate.test/127.0.0.1
-
-sudo mkdir -p /etc/resolver 
-
-cat &gt; /etc/resolver/substrate.test
-# then enter: nameserver 127.0.0.1
-
-sudo brew services restart dnsmasq
-
-# Verify it works as expected
-
-dig playground-dev.substrate.test @localhost +short
-ping playground-dev.substrate.test
-</code></pre>
-<p>Then deploy the cluster:</p>
-<pre><code class="language-shell">make k8s-deploy-playground
-</code></pre>
-<p>And initialize relevant ConfigMaps:</p>
-<pre><code class="language-shell">make k8s-update-templates-config
-</code></pre>
-<p>You can now browse <code>http://playground-dev.substrate.test</code>.</p>
-<p>Note that with this setup docker images must be re-compiled and <code>kustomization.yaml</code> before each new re-deploy to reflect code changes.</p>
-<p>An alternative is to use <a href="https://skaffold.dev/">skaffold</a>. This tool will re-compile Docker images and re-deploy the whole cluster after each code change.</p>
-<pre><code class="language-shell"># Instead of `make k8s-deploy-playground`
-make k8s-dev
-</code></pre>
-<h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
-<p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
-<h3><a class="header" href="#cli" id="cli">CLI</a></h3>
-<p>Install <a href="https://github.com/derailed/k9s">k9s</a></p>
-<h3><a class="header" href="#web" id="web">Web</a></h3>
-<p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
-<pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
-</code></pre>
-<p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
-<pre><code class="language-shell"># Add a dummy user access
-# Warning: user is granted all access
-kubectl apply -f conf/k8s/dashboard-user.yaml
-# Get access to the token
-kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
-</code></pre>
-<p>Let the dashboard be accessible:</p>
-<pre><code class="language-shell">kubectl proxy
-</code></pre>
-<p>Then navigate to this <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">link</a> and supply the relevant token.</p>
+                        <p>Users can use a TypeScript base front end to communicate with a backend. This HTTP server is hosted on kubernetes and deploys custom <a href="https://www.theia-ide.org/">theia</a> (a web based VSCode IDE) containers via kubernetes API.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="MONITORING.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                        
 
                         
-                            <a rel="next" href="CUSTOM_TEMPLATE.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="DEPLOYMENT.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -248,13 +182,9 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="MONITORING.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
-                
 
                 
-                    <a rel="next" href="CUSTOM_TEMPLATE.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="DEPLOYMENT.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

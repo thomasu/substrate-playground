@@ -19,8 +19,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        
         <link rel="icon" href="favicon.svg">
+        
+        
         <link rel="shortcut icon" href="favicon.png">
+        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
@@ -38,6 +42,8 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="mermaid.css">
         
 
         
@@ -91,7 +97,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ARCHITECTURE.html">ARCHITECTURE</a></li><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -157,7 +163,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#update-playground-image" id="update-playground-image">Update playground image</a></h1>
+                        <p>Users can use a TypeScript base front end to communicate with a backend. This HTTP server is hosted on kubernetes and deploys custom <a href="https://www.theia-ide.org/">theia</a> (a web based VSCode IDE) containers via kubernetes API.</p>
+<h1><a class="header" href="#update-playground-image" id="update-playground-image">Update playground image</a></h1>
 <ul>
 <li>build and push new image (<code>make push-playground-docker-image</code>)</li>
 <li>select right context (<code>ENVIRONMENT=staging make k8s-setup-gke</code>)</li>
@@ -361,7 +368,29 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 <p>An example of adding support to an external repository can be found <a href="https://github.com/substrate-developer-hub/substrate-node-template/">here</a>.</p>
 <p>After the associated Github workflow in <a href="https://github.com/paritytech/substrate-playground">substrate-playground</a> is triggered, playground will use the newly built image. </p>
 <h1><a class="header" href="#github-workflow" id="github-workflow">Github workflow</a></h1>
-<p>See a working example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.github/workflows/build-push-template.yml">here</a>.</p>
+<p>A template workflow can be found <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflow-templates/cd-template.yml">here</a>.</p>
+<p>This workflow will:</p>
+<ul>
+<li>create and publish a standalone Docker image based on a local Dockerfile</li>
+<li>update <code>.devcontainer/devcontainer.json</code> to use this new image</li>
+<li>commit changes</li>
+<li>trigger <code>template-updated</code> on <code>paritytech/substrate-playground</code></li>
+</ul>
+<p>This event triggers the following actions in <code>paritytech/substrate-playground</code>:</p>
+<ul>
+<li>create and publish a <a href="https://github.com/paritytech/substrate-playground/blob/develop/templates/Dockerfile.template">composite docker image</a> from the new template one and latest <a href="https://github.com/paritytech/substrate-playground/blob/develop/templates/Dockerfile.base">base one</a></li>
+<li>update <a href="https://github.com/paritytech/substrate-playground/tree/develop/conf/k8s/overlays/staging/templates">template image id</a></li>
+<li>commit changes</li>
+</ul>
+<p>Changes to the configuration file are finally <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflows/cd-templates.yml">continuously deployed</a> to the staging playground environment as kubernetes ConfigMap.</p>
+<p>Once live, images are tested and rollbacked if errors are detected.</p>
+<pre class="mermaid">sequenceDiagram
+	CUSTOM_TEMPLATE-&gt;&gt;CUSTOM_TEMPLATE: Build docker image
+	CUSTOM_TEMPLATE-&gt;&gt;PLAYGROUND: Trigger template-updated
+	PLAYGROUND--&gt;&gt;PLAYGROUND: Build template docker image
+	PLAYGROUND--&gt;&gt;PLAYGROUND: Push new configuration to staging
+    PLAYGROUND--&gt;&gt;PLAYGROUND: Test new image
+</pre>
 <h2><a class="header" href="#github-secrets" id="github-secrets">Github secrets</a></h2>
 <p>The following secrets must be defined:</p>
 <p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> to push the image to dockerhub (values will depend on the chosen docker image org)
@@ -413,6 +442,10 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        
+        <script type="text/javascript" src="mermaid-init.js"></script>
         
 
         
