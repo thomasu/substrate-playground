@@ -395,6 +395,8 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 <p>The following secrets must be defined:</p>
 <p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> to push the image to dockerhub (values will depend on the chosen docker image org)
 <code>REPO_ACCESS_TOKEN</code> a token with <code>public_repo</code> or repo scope</p>
+<h2><a class="header" href="#keeping-uptodate" id="keeping-uptodate">Keeping uptodate</a></h2>
+<p>Docker images will be rebuilt and pushed each time there are changes to master branch. This can be tweaked by modifying the workflow.</p>
 
                     </main>
 
