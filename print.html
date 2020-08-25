@@ -365,18 +365,12 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 <li>.vscode/tasks.json</li>
 <li>.vscode/snippets.code-snippets</li>
 </ul>
-<p>An example of adding support to an external repository can be found <a href="https://github.com/substrate-developer-hub/substrate-node-template/">here</a>.</p>
-<p>After the associated Github workflow in <a href="https://github.com/paritytech/substrate-playground">substrate-playground</a> is triggered, playground will use the newly built image. </p>
+<p>After the associated Github <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflows/event-template-updated.yml">workflow</a> in substrate-playground is triggered, playground will use the newly built image. </p>
 <h1><a class="header" href="#github-workflow" id="github-workflow">Github workflow</a></h1>
 <p>A template workflow can be found <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflow-templates/cd-template.yml">here</a>.</p>
-<p>This workflow will:</p>
-<ul>
-<li>create and publish a standalone Docker image based on a local Dockerfile</li>
-<li>update <code>.devcontainer/devcontainer.json</code> to use this new image</li>
-<li>commit changes</li>
-<li>trigger <code>template-updated</code> on <code>paritytech/substrate-playground</code></li>
-</ul>
-<p>This event triggers the following actions in <code>paritytech/substrate-playground</code>:</p>
+<p><code>client_payload</code> must define <code>id</code> pointing to one of the existing <a href="https://github.com/paritytech/substrate-playground/blob/develop/conf/k8s/overlays/staging/">templates</a>.
+It can also define a <code>ref</code> (branch/tag/commit used to build, defaults to <em>master</em>) and a <code>dockerFile</code> location (default to <em>.devcontainer/Dockerfile</em>)</p>
+<p>This workflow will trigger the <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflows/event-template-updated.yml"><em>template-updated</em> workflow</a> on <a href="https://github.com/paritytech/substrate-playground/">substrate-playground</a>, including the following actions:</p>
 <ul>
 <li>create and publish a <a href="https://github.com/paritytech/substrate-playground/blob/develop/templates/Dockerfile.template">composite docker image</a> from the new template one and latest <a href="https://github.com/paritytech/substrate-playground/blob/develop/templates/Dockerfile.base">base one</a></li>
 <li>update <a href="https://github.com/paritytech/substrate-playground/tree/develop/conf/k8s/overlays/staging/templates">template image id</a></li>
@@ -385,18 +379,15 @@ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboar
 <p>Changes to the configuration file are finally <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflows/cd-templates.yml">continuously deployed</a> to the staging playground environment as kubernetes ConfigMap.</p>
 <p>Once live, images are tested and rollbacked if errors are detected.</p>
 <pre class="mermaid">sequenceDiagram
-	CUSTOM_TEMPLATE-&gt;&gt;CUSTOM_TEMPLATE: Build docker image
 	CUSTOM_TEMPLATE-&gt;&gt;PLAYGROUND: Trigger template-updated
+	PLAYGROUND-&gt;&gt;PLAYGROUND: Build docker image
 	PLAYGROUND--&gt;&gt;PLAYGROUND: Build template docker image
 	PLAYGROUND--&gt;&gt;PLAYGROUND: Push new configuration to staging
     PLAYGROUND--&gt;&gt;PLAYGROUND: Test new image
 </pre>
 <h2><a class="header" href="#github-secrets" id="github-secrets">Github secrets</a></h2>
 <p>The following secrets must be defined:</p>
-<p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> to push the image to dockerhub (values will depend on the chosen docker image org)
-<code>REPO_ACCESS_TOKEN</code> a token with <code>public_repo</code> or repo scope</p>
-<h2><a class="header" href="#keeping-uptodate" id="keeping-uptodate">Keeping uptodate</a></h2>
-<p>Docker images will be rebuilt and pushed each time there are changes to master branch. This can be tweaked by modifying the workflow.</p>
+<p><code>REPO_ACCESS_TOKEN</code> a token with <code>public_repo</code> or repo scope</p>
 
                     </main>
 
