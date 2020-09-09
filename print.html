@@ -97,7 +97,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ARCHITECTURE.html">ARCHITECTURE</a></li><li class="chapter-item expanded affix "><a href="DEPLOYMENT.html">DEPLOYMENT</a></li><li class="chapter-item expanded affix "><a href="MONITORING.html">MONITORING</a></li><li class="chapter-item expanded affix "><a href="DEVELOPMENT.html">DEVELOPMENT</a></li><li class="chapter-item expanded affix "><a href="CUSTOM_TEMPLATE.html">CUSTOM TEMPLATE</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="INTRO.html">Intro</a></li><li class="chapter-item expanded "><a href="BUILD.html"><strong aria-hidden="true">1.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ARCHITECTURE.html"><strong aria-hidden="true">1.1.</strong> ARCHITECTURE</a></li><li class="chapter-item expanded "><a href="DEVELOPMENT.html"><strong aria-hidden="true">1.2.</strong> DEVELOPMENT</a></li><li class="chapter-item expanded "><a href="CICD.html"><strong aria-hidden="true">1.3.</strong> CICD</a></li><li class="chapter-item expanded "><a href="DEPLOYMENT.html"><strong aria-hidden="true">1.4.</strong> DEPLOYMENT</a></li><li class="chapter-item expanded "><a href="MONITORING.html"><strong aria-hidden="true">1.5.</strong> MONITORING</a></li><li class="chapter-item expanded "><a href="SECURITY.html"><strong aria-hidden="true">1.6.</strong> SECURITY</a></li></ol></li><li class="chapter-item expanded "><a href="EXTEND.html"><strong aria-hidden="true">2.</strong> Extend</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="INTEGRATION.html"><strong aria-hidden="true">2.1.</strong> INTEGRATION</a></li><li class="chapter-item expanded "><a href="CUSTOM_TEMPLATE.html"><strong aria-hidden="true">2.2.</strong> CUSTOM TEMPLATE</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,7 +163,98 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Users can use a TypeScript base front end to communicate with a backend. This HTTP server is hosted on kubernetes and deploys custom <a href="https://www.theia-ide.org/">theia</a> (a web based VSCode IDE) containers via kubernetes API.</p>
+                        <p>Everything you want to know about Playground</p>
+<p>So you wanna build and run Playground?</p>
+<p>Users can use a TypeScript base front end to communicate with a backend. This HTTP server is hosted on kubernetes and deploys custom <a href="https://www.theia-ide.org/">theia</a> (a web based VSCode IDE) containers via kubernetes API.</p>
+<p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
+It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
+<pre><code class="language-shell"># Use the local kubernetes cluster
+kubectl config use-context docker-for-desktop
+kubectl config set-context --current --namespace=default
+
+# or
+
+make k8s-setup-development
+</code></pre>
+<p>A DNS resolving <code>playground-dev.substrate.test</code> to localhost must also be configured.</p>
+<p>On OSX, it can be achieved the following way:</p>
+<pre><code class="language-shell">brew install dnsmasq
+
+cp /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.orig
+echo &quot;conf-dir=/usr/local/etc/dnsmasq.d/,*.conf&quot; | tee /usr/local/etc/dnsmasq.conf
+
+cat &gt; /usr/local/etc/dnsmasq.d/playground.conf
+# then enter: address=/playground-dev.substrate.test/127.0.0.1
+
+sudo mkdir -p /etc/resolver 
+
+cat &gt; /etc/resolver/substrate.test
+# then enter: nameserver 127.0.0.1
+
+sudo brew services restart dnsmasq
+
+# Verify it works as expected
+
+dig playground-dev.substrate.test @localhost +short
+ping playground-dev.substrate.test
+</code></pre>
+<p>Then deploy the cluster:</p>
+<pre><code class="language-shell">make k8s-deploy-playground
+</code></pre>
+<p>And initialize relevant ConfigMaps:</p>
+<pre><code class="language-shell">make k8s-update-templates-config
+</code></pre>
+<p>You can now browse <code>http://playground-dev.substrate.test</code>.</p>
+<p>Note that with this setup docker images must be re-compiled and <code>kustomization.yaml</code> before each new re-deploy to reflect code changes.</p>
+<p>An alternative is to use <a href="https://skaffold.dev/">skaffold</a>. This tool will re-compile Docker images and re-deploy the whole cluster after each code change.</p>
+<pre><code class="language-shell"># Instead of `make k8s-deploy-playground`
+make k8s-dev
+</code></pre>
+<h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
+<p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
+<h3><a class="header" href="#cli" id="cli">CLI</a></h3>
+<p>Install <a href="https://github.com/derailed/k9s">k9s</a></p>
+<h3><a class="header" href="#web" id="web">Web</a></h3>
+<p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
+<pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+</code></pre>
+<p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
+<pre><code class="language-shell"># Add a dummy user access
+# Warning: user is granted all access
+kubectl apply -f conf/k8s/dashboard-user.yaml
+# Get access to the token
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+</code></pre>
+<p>Let the dashboard be accessible:</p>
+<pre><code class="language-shell">kubectl proxy
+</code></pre>
+<p>Then navigate to this <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">link</a> and supply the relevant token.</p>
+<p><code>substrate-playground</code> follows a Continuous Integration/Continuous Delivery approach</p>
+<h1><a class="header" href="#deployments" id="deployments">Deployments</a></h1>
+<h2><a class="header" href="#playground" id="playground">Playground</a></h2>
+<p>The main branch is <a href="https://github.com/paritytech/substrate-playground/tree/develop">develop</a>. Changes can be merged only via PR.
+<a href="https://github.com/paritytech/substrate-playground/tree/develop">develop</a> (reflected by <a href="http://playground-staging.substrate.dev/">staging</a>) and <a href="https://github.com/paritytech/substrate-playground/tree/master">master</a> (reflected by <a href="http://playground.substrate.dev/">production</a>) are continuously deployed on their respective environment.</p>
+<p>Once manually approved on the staging environment, changes are promoted to master.
+(TODO via releases? tags?)</p>
+<h2><a class="header" href="#base-template-images" id="base-template-images">Base template images</a></h2>
+<h2><a class="header" href="#template-images" id="template-images">Template images</a></h2>
+<h1><a class="header" href="#github-configuration" id="github-configuration">Github configuration</a></h1>
+<h2><a class="header" href="#secrets" id="secrets">Secrets</a></h2>
+<p>A number of <code>secrets</code> must be defined:</p>
+<p><code>GKE_PROJECT</code></p>
+<p><code>GCLOUD_KEY</code> is the base64 of the gcloud service account JSON file
+Get the JSON file from https://console.cloud.google.com/iam-admin/serviceaccounts?authuser=1&amp;hl=fr&amp;project=substrateplayground-252112&amp;folder=&amp;organizationId=&amp;supportedpurview=project
+... -&gt; Actions -&gt; Create Key
+then <code>base64 substrateplayground-XXX.json | tr -d</code></p>
+<p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> pointing to a valid dockerhub account having acccess to paritytech organization</p>
+<p><code>MATRIX_ACCESS_TOKEN</code> and <code>MATRIX_ROOM_ID</code> pointing to a specific Matrix room</p>
+<p><code>PAT_TOKEN</code> a <a href="https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token">token</a> with <code>repo</code> access</p>
+<h2><a class="header" href="#matrix-messages" id="matrix-messages">Matrix messages</a></h2>
+<h3><a class="header" href="#create-a-new-user" id="create-a-new-user">Create a new user</a></h3>
+<p>Go to https://riot.im/app/#/register (advanced, https://matrix.parity.io)
+Username: <code>playground-bot</code>
+Email: <code>julien+playground-bot@parity.io</code></p>
+<p>Then retrieve <code>access_token</code> via <code>curl -XPOST -d '{&quot;type&quot;:&quot;m.login.password&quot;, &quot;user&quot;:&quot;playground-bot&quot;, &quot;password&quot;:&quot;PASSWORD&quot;}' &quot;https://matrix.parity.io:8448/_matrix/client/r0/login&quot;</code> and use it as a Github repository secret.</p>
 <h1><a class="header" href="#update-playground-image" id="update-playground-image">Update playground image</a></h1>
 <ul>
 <li>build and push new image (<code>make push-playground-docker-image</code>)</li>
@@ -288,69 +379,35 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
 <li>https://blog.octo.com/liveness-et-readiness-probes-mettez-de-lintelligence-dans-vos-clusters/</li>
 <li>https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#examples</li>
 </ul>
-<p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
-It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
-<pre><code class="language-shell"># Use the local kubernetes cluster
-kubectl config use-context docker-for-desktop
-kubectl config set-context --current --namespace=default
-
-# or
-
-make k8s-setup-development
+<p>https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster
+https://prometheus.io/docs/operating/security/</p>
+<p>So you wanna extend Playground?</p>
+<h1><a class="header" href="#url-based-deployment" id="url-based-deployment">URL based deployment</a></h1>
+<p>Use a URL that once accessed trigger an instance deployment and redirects to the newly created theia instance.</p>
+<h2><a class="header" href="#query-parameters" id="query-parameters">Query parameters</a></h2>
+<ul>
+<li>deploy=<code>id</code> where id is a recoiognized template id</li>
+<li>files=%2Fsome%2FfileA,%2Fsome%2FfileB opens some files</li>
+</ul>
+<p>e.g. <code>https://playground-staging.substrate.dev/?deploy=recipes&amp;files=%2Fhome%2Fsubstrate%2Fworkspace%2Fpallets%2Fadding-machine%2Fsrc%2Flib.rs</code></p>
+<h1><a class="header" href="#api" id="api">API</a></h1>
+<p>Instances can be created and destroyed using an HTTP API.</p>
+<pre><code>GET https://playground-staging.substrate.dev/api/
+POST https://playground-staging.substrate.dev/api/?template=node-template
+GET https://playground-staging.substrate.dev/api/$INSTANCE_UUID
+DELETE https://playground-staging.substrate.dev/api/$INSTANCE_UUID
 </code></pre>
-<p>A DNS resolving <code>playground-dev.substrate.test</code> to localhost must also be configured.</p>
-<p>On OSX, it can be achieved the following way:</p>
-<pre><code class="language-shell">brew install dnsmasq
-
-cp /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.orig
-echo &quot;conf-dir=/usr/local/etc/dnsmasq.d/,*.conf&quot; | tee /usr/local/etc/dnsmasq.conf
-
-cat &gt; /usr/local/etc/dnsmasq.d/playground.conf
-# then enter: address=/playground-dev.substrate.test/127.0.0.1
-
-sudo mkdir -p /etc/resolver 
-
-cat &gt; /etc/resolver/substrate.test
-# then enter: nameserver 127.0.0.1
-
-sudo brew services restart dnsmasq
-
-# Verify it works as expected
-
-dig playground-dev.substrate.test @localhost +short
-ping playground-dev.substrate.test
+<p>A local instance identified by its UUID can be manipulated:</p>
+<pre><code class="language-javascript">const instance = new Instance($UUID);
+await instance.list(); //[&quot;vscode.open&quot;, ...]
+await instance.execute(&quot;vscode.open&quot;, &quot;/some/path&quot;);
 </code></pre>
-<p>Then deploy the cluster:</p>
-<pre><code class="language-shell">make k8s-deploy-playground
+<p>Local instances can be discovered:</p>
+<pre><code class="language-javascript">const discoverer = new Discoverer((instance: Instance) =&gt; {
+    console.log(`New instance discovered ${instance.uuid}`);
+});
+console.log(discoverer.instances);
 </code></pre>
-<p>And initialize relevant ConfigMaps:</p>
-<pre><code class="language-shell">make k8s-update-templates-config
-</code></pre>
-<p>You can now browse <code>http://playground-dev.substrate.test</code>.</p>
-<p>Note that with this setup docker images must be re-compiled and <code>kustomization.yaml</code> before each new re-deploy to reflect code changes.</p>
-<p>An alternative is to use <a href="https://skaffold.dev/">skaffold</a>. This tool will re-compile Docker images and re-deploy the whole cluster after each code change.</p>
-<pre><code class="language-shell"># Instead of `make k8s-deploy-playground`
-make k8s-dev
-</code></pre>
-<h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
-<p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
-<h3><a class="header" href="#cli" id="cli">CLI</a></h3>
-<p>Install <a href="https://github.com/derailed/k9s">k9s</a></p>
-<h3><a class="header" href="#web" id="web">Web</a></h3>
-<p><a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">Install</a> the web <a href="https://github.com/kubernetes/dashboard/">dashboard</a> to have a simple way to manage the k8s cluster:</p>
-<pre><code class="language-shell">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
-</code></pre>
-<p>Setup <a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">user access</a>:</p>
-<pre><code class="language-shell"># Add a dummy user access
-# Warning: user is granted all access
-kubectl apply -f conf/k8s/dashboard-user.yaml
-# Get access to the token
-kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
-</code></pre>
-<p>Let the dashboard be accessible:</p>
-<pre><code class="language-shell">kubectl proxy
-</code></pre>
-<p>Then navigate to this <a href="http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login">link</a> and supply the relevant token.</p>
 <p>External users can provide and maintain templates used by the playground.</p>
 <p>To create a template the following steps are mandatory:</p>
 <ul>

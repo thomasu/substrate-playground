@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>MONITORING - Playground</title>
+        <title>INTEGRATION - Playground</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="INTRO.html">Intro</a></li><li class="chapter-item expanded "><a href="BUILD.html"><strong aria-hidden="true">1.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ARCHITECTURE.html"><strong aria-hidden="true">1.1.</strong> ARCHITECTURE</a></li><li class="chapter-item expanded "><a href="DEVELOPMENT.html"><strong aria-hidden="true">1.2.</strong> DEVELOPMENT</a></li><li class="chapter-item expanded "><a href="CICD.html"><strong aria-hidden="true">1.3.</strong> CICD</a></li><li class="chapter-item expanded "><a href="DEPLOYMENT.html"><strong aria-hidden="true">1.4.</strong> DEPLOYMENT</a></li><li class="chapter-item expanded "><a href="MONITORING.html" class="active"><strong aria-hidden="true">1.5.</strong> MONITORING</a></li><li class="chapter-item expanded "><a href="SECURITY.html"><strong aria-hidden="true">1.6.</strong> SECURITY</a></li></ol></li><li class="chapter-item expanded "><a href="EXTEND.html"><strong aria-hidden="true">2.</strong> Extend</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="INTEGRATION.html"><strong aria-hidden="true">2.1.</strong> INTEGRATION</a></li><li class="chapter-item expanded "><a href="CUSTOM_TEMPLATE.html"><strong aria-hidden="true">2.2.</strong> CUSTOM TEMPLATE</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="INTRO.html">Intro</a></li><li class="chapter-item expanded "><a href="BUILD.html"><strong aria-hidden="true">1.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ARCHITECTURE.html"><strong aria-hidden="true">1.1.</strong> ARCHITECTURE</a></li><li class="chapter-item expanded "><a href="DEVELOPMENT.html"><strong aria-hidden="true">1.2.</strong> DEVELOPMENT</a></li><li class="chapter-item expanded "><a href="CICD.html"><strong aria-hidden="true">1.3.</strong> CICD</a></li><li class="chapter-item expanded "><a href="DEPLOYMENT.html"><strong aria-hidden="true">1.4.</strong> DEPLOYMENT</a></li><li class="chapter-item expanded "><a href="MONITORING.html"><strong aria-hidden="true">1.5.</strong> MONITORING</a></li><li class="chapter-item expanded "><a href="SECURITY.html"><strong aria-hidden="true">1.6.</strong> SECURITY</a></li></ol></li><li class="chapter-item expanded "><a href="EXTEND.html"><strong aria-hidden="true">2.</strong> Extend</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="INTEGRATION.html" class="active"><strong aria-hidden="true">2.1.</strong> INTEGRATION</a></li><li class="chapter-item expanded "><a href="CUSTOM_TEMPLATE.html"><strong aria-hidden="true">2.2.</strong> CUSTOM TEMPLATE</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -161,45 +161,45 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>{{# DEPLOYMENT}}</p>
-<h1><a class="header" href="#infrastructure" id="infrastructure">Infrastructure</a></h1>
-<p>kube, docker, backend server
-https://docs.docker.com/config/thirdparty/prometheus/</p>
-<h1><a class="header" href="#theia-and-users" id="theia-and-users">Theia and users</a></h1>
-<h1><a class="header" href="#deployed-nodes" id="deployed-nodes">Deployed nodes</a></h1>
-<p>Substrate exposes prometeus endpoints
-https://github.com/paritytech/substrate/pull/4511
-https://forum.parity.io/t/metrics-for-reliability-and-performance-monitoring/356</p>
-<h1><a class="header" href="#resources" id="resources">Resources</a></h1>
-<p>https://mxinden.github.io/static/self-service-monitoring.pdf (https://github.com/mxinden/self-service-monitoring-workshop)
-https://mxinden.github.io/static/metric-driven-performance-optimization/slides.pdf</p>
-<h1><a class="header" href="#stackdriver" id="stackdriver">Stackdriver</a></h1>
-<p>https://cloud.google.com/stackdriver/pricing</p>
-<h2><a class="header" href="#monitoring--probes" id="monitoring--probes">Monitoring / Probes</a></h2>
+                        <h1><a class="header" href="#url-based-deployment" id="url-based-deployment">URL based deployment</a></h1>
+<p>Use a URL that once accessed trigger an instance deployment and redirects to the newly created theia instance.</p>
+<h2><a class="header" href="#query-parameters" id="query-parameters">Query parameters</a></h2>
 <ul>
-<li>https://console.cloud.google.com/marketplace/details/google/prometheus</li>
-<li>https://prometheus.io/docs/visualization/grafana/</li>
-<li>https://grafana.com/docs/grafana/latest/features/datasources/prometheus/</li>
-<li>https://itnext.io/kubernetes-monitoring-with-prometheus-in-15-minutes-8e54d1de2e13</li>
-<li>https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</li>
-<li>https://medium.com/@AADota/kubernetes-liveness-and-readiness-probes-difference-1b659c369e17</li>
-<li>https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-setting-up-health-checks-with-readiness-and-liveness-probes</li>
-<li>https://blog.octo.com/liveness-et-readiness-probes-mettez-de-lintelligence-dans-vos-clusters/</li>
-<li>https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#examples</li>
+<li>deploy=<code>id</code> where id is a recoiognized template id</li>
+<li>files=%2Fsome%2FfileA,%2Fsome%2FfileB opens some files</li>
 </ul>
+<p>e.g. <code>https://playground-staging.substrate.dev/?deploy=recipes&amp;files=%2Fhome%2Fsubstrate%2Fworkspace%2Fpallets%2Fadding-machine%2Fsrc%2Flib.rs</code></p>
+<h1><a class="header" href="#api" id="api">API</a></h1>
+<p>Instances can be created and destroyed using an HTTP API.</p>
+<pre><code>GET https://playground-staging.substrate.dev/api/
+POST https://playground-staging.substrate.dev/api/?template=node-template
+GET https://playground-staging.substrate.dev/api/$INSTANCE_UUID
+DELETE https://playground-staging.substrate.dev/api/$INSTANCE_UUID
+</code></pre>
+<p>A local instance identified by its UUID can be manipulated:</p>
+<pre><code class="language-javascript">const instance = new Instance($UUID);
+await instance.list(); //[&quot;vscode.open&quot;, ...]
+await instance.execute(&quot;vscode.open&quot;, &quot;/some/path&quot;);
+</code></pre>
+<p>Local instances can be discovered:</p>
+<pre><code class="language-javascript">const discoverer = new Discoverer((instance: Instance) =&gt; {
+    console.log(`New instance discovered ${instance.uuid}`);
+});
+console.log(discoverer.instances);
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="DEPLOYMENT.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="EXTEND.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="SECURITY.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="CUSTOM_TEMPLATE.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -211,13 +211,13 @@ https://mxinden.github.io/static/metric-driven-performance-optimization/slides.p
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="DEPLOYMENT.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="EXTEND.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="SECURITY.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="CUSTOM_TEMPLATE.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
