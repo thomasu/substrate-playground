@@ -410,9 +410,8 @@ console.log(discoverer.instances);
 <p>External users can provide and maintain templates used by the playground.</p>
 <p>To create a template the following steps are mandatory:</p>
 <ul>
-<li>create a basic Dockerfile (in <code>.devcontainer/Dockerfile</code>) extending <code>paritytech/substrate-playground-template-base</code></li>
-<li>create <code>.devcontainer/devcontainer.json</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.devcontainer/devcontainer.json">here</a>)</li>
-<li>create a Github worflow that build this image then dispatches an event to <code>substrate-playground</code> (find an example <a href="https://github.com/substrate-developer-hub/substrate-node-template/blob/master/.github/workflows/build-push-template.yml">here</a>)</li>
+<li>create <code>.devcontainer/devcontainer.json</code> (find an example <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflow-templates/devcontainer.json">here</a>)</li>
+<li>create a Github worflow that build this image then dispatches an event to <code>substrate-playground</code> (find an example <a href="https://github.com/paritytech/substrate-playground/blob/develop/.github/workflow-templates/cd-template.yml">here</a>)</li>
 </ul>
 <p>Additionally there are a number of standard VSCode configuration files that will be leveraged by the playground:</p>
 <ul>
