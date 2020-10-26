@@ -28,7 +28,9 @@
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
+        
         <link rel="stylesheet" href="css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
@@ -132,9 +134,11 @@
                     <h1 class="menu-title">Playground</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                     </div>
                 </div>
@@ -210,6 +214,11 @@ ping playground-dev.substrate.test
 <pre><code class="language-shell"># Instead of `make k8s-deploy-playground`
 make k8s-dev
 </code></pre>
+<p>Additionally, to use a fresh <code>Test</code> template, run the following before:</p>
+<pre><code class="language-bash">make build-template-base
+make build-template-theia-base
+make push-test-templates
+</code></pre>
 <h2><a class="header" href="#dashboard" id="dashboard">Dashboard</a></h2>
 <p>Some simple dashboards can be deployed to offer finer grain cluster details.</p>
 <h3><a class="header" href="#cli" id="cli">CLI</a></h3>
@@ -273,7 +282,8 @@ ENVIRONMENT=staging make k8s-setup-gke
 <p>Make sure a Github OAuth App is <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app">created</a>. The Authorization callback URL should be <code>$BASE/api/auth/github</code>.</p>
 <p>Set required ConfigMap and Secret as defined in the newly created OAuth app:</p>
 <pre><code class="language-shell">kubectl create configmap config --namespace=playground-staging --from-literal=github.clientId=''
-kubectl create secret generic secrets --namespace=playground-staging --from-literal=github.clientSecret=''
+ROCKET_SECRET_KEY=`openssl rand -base64 32`
+kubectl create secret generic secrets --namespace=playground-staging --from-literal=github.clientSecret='' --from-literal=rocket.secretKey='ROCKET_SECRET_KEY'
 </code></pre>
 <p>Deploy on GKE:</p>
 <pre><code>kubectl config use-context gke_substrateplayground-252112_us-central1-a_substrate-playground
