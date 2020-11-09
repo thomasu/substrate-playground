@@ -176,11 +176,11 @@
 <h1><a class="header" href="#github-configuration" id="github-configuration">Github configuration</a></h1>
 <h2><a class="header" href="#secrets" id="secrets">Secrets</a></h2>
 <p>A number of <code>secrets</code> must be defined:</p>
-<p><code>GKE_PROJECT</code></p>
 <p><code>GCLOUD_KEY</code> is the base64 of the gcloud service account JSON file
 Get the JSON file from https://console.cloud.google.com/iam-admin/serviceaccounts?authuser=1&amp;hl=fr&amp;project=substrateplayground-252112&amp;folder=&amp;organizationId=&amp;supportedpurview=project
 ... -&gt; Actions -&gt; Create Key
-then <code>base64 substrateplayground-XXX.json | tr -d</code></p>
+then <code>cat substrateplayground-XXX.json | base64</code>
+(see https://github.com/GoogleCloudPlatform/github-actions/blob/master/setup-gcloud/README.md#inputs)</p>
 <p><code>DOCKER_USERNAME</code> and <code>DOCKER_PASSWORD</code> pointing to a valid dockerhub account having acccess to paritytech organization</p>
 <p><code>MATRIX_ACCESS_TOKEN</code> and <code>MATRIX_ROOM_ID</code> pointing to a specific Matrix room</p>
 <p><code>PAT_TOKEN</code> a <a href="https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token">token</a> with <code>repo</code> access</p>

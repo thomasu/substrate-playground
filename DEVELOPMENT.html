@@ -167,14 +167,6 @@
                     <main>
                         <p>Local dev environment relies on <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> kubernetes support. Make sure it is <a href="https://docs.docker.com/docker-for-mac/#kubernetes">enabled</a> before continuing.
 It is also possible to use <a href="https://minikube.sigs.k8s.io/">minikube</a> or others alternatives.</p>
-<pre><code class="language-shell"># Use the local kubernetes cluster
-kubectl config use-context docker-for-desktop
-kubectl config set-context --current --namespace=default
-
-# or
-
-make k8s-setup-development
-</code></pre>
 <p>A DNS resolving <code>playground-dev.substrate.test</code> to localhost must also be configured.</p>
 <p>On OSX, it can be achieved the following way:</p>
 <pre><code class="language-shell">brew install dnsmasq
